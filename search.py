@@ -116,7 +116,31 @@ df_topic_keywords.columns = ['Word '+str(i) for i in range(df_topic_keywords.sha
 df_topic_keywords.index = ['Topic '+str(i) for i in range(df_topic_keywords.shape[0])]
 
 # Predict the topic
-mytext = ["usability must be included as part non functional"]
+mytext = ["testing must be included as part non functional"]
 infer_topic, topic, prob_scores = predict_topic(text = mytext, df_topic_keywords=df_topic_keywords)
 print(topic)
 print(infer_topic)
+
+# assign domninant topic to all documents
+def apply_predict_topic(text, df_topic_keywords):
+    text = [text]
+    infer_topic, topic, prob_scores = predict_topic(text = text, df_topic_keywords=df_topic_keywords)
+    return(infer_topic)
+tagged_texts = [{document: apply_predict_topic(document, df_topic_keywords)} for document in texts]
+
+# get similar texts
+from sklearn.metrics.pairwise import euclidean_distances
+
+def similar_documents(text, doc_topic_probs, documents = texts, nlp=nlp, top_n=5, verbose=False, df_topic_keywords=df_topic_keywords):
+    _, topic, x  = predict_topic(text, df_topic_keywords)
+    dists = euclidean_distances(x.reshape(1, -1), doc_topic_probs)[0]
+    doc_ids = np.argsort(dists)[:top_n]
+    if verbose:        
+        print("Topic KeyWords: ", topic)
+        print("Topic Prob Scores of text: ", np.round(x, 1))
+        print("Most Similar Doc's Probs:  ", np.round(doc_topic_probs[doc_ids], 1))
+    return doc_ids, np.take(documents, doc_ids)
+
+doc_ids, docs = similar_documents(text=mytext, doc_topic_probs=lda_output, documents = texts, top_n=1, verbose=True)
+print('\n', docs[0][:500])
+print()
