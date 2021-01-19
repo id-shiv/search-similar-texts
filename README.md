@@ -1,37 +1,27 @@
 # Search similar texts using Topic Modelling
 
-Search similar texts given a series of texts by applying Topic Modelling approach.
+For a given text, retrieve the associated topic and top N similar texts by Topic Modelling approach (LDA).
 
 ## Approach
 
-- Assign topics + probabilities to each text.
-- Each topic would be associated with words + probabilities.
-- Extract topics from new text
-- Match the best topic + text based on new text topics.
+* For a given set of documents:
+  * Find the ideal model parameters for topic modelling (LDA) i.e. number of topics, learning decay.
+  * Generate document-word matrix with weightage of each word.
+  * Generate topic-word matrix with number of words limited to each topic.
+
+* Predict:
+  * For a given text, retreive the best topic.
+  * Get the dominant word in the predicted topic.
+  * Dominant word ultimately is the topic tag
+
+* Get similar douments:
+  * For a given text, derive distance with all documents.
+  * Get the top N documents based on distance.
 
 ## Output
 
-- Predict a dominant tag for a given text.
-- Find N similar texts for a given text.
-
-## How to run?
-
-    # import the data
-    texts = list()
-    with open('texts.txt', 'r') as f:
-        texts = [text.strip() for text in f.readlines() if len(text) > 1]
-
-    data = TopicModelling(documents=texts)
-
-    # Predict the topic
-    mytext = ["must be included as part non functional"]
-    infer_topic, topic, prob_scores = data.predict(text = mytext)
-    # print(topic)
-    print(infer_topic)
-
-    # get similar texts
-    doc_ids, docs = data.similar(text=mytext, top_n=5)
-    print(docs)
+* Predict a topic (dominant word associated to the topic) for a given text.
+* Find N similar texts for a given text and documents.
 
 ## Reference
 
